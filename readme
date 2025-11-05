@@ -1,0 +1,140 @@
+#Serverless Static Website Hosting on AWS
+
+## Project Overview
+This project demonstrates how to host a static website using a serverless architecture on Amazon Web Services (AWS).  
+The website is deployed using Amazon S3 for storage, CloudFront for global content delivery, and Route 53 for custom domain management.  
+This setup ensures scalability, high availability, low cost, and enhanced security with HTTPS (SSL).
+
+---
+
+## Features
+- Serverless architecture with no manual server management  
+- Static website hosting using Amazon S3  
+- Global content delivery using Amazon CloudFront  
+- Optional custom domain mapping via Amazon Route 53  
+- HTTPS-enabled security using AWS Certificate Manager (ACM)  
+- Cost-effective and highly available web hosting solution  
+
+---
+
+## Technologies Used
+| Category | Tools / Services |
+|-----------|------------------|
+| Cloud Platform | Amazon Web Services (AWS) |
+| Core Services | S3, CloudFront, Route 53, ACM, IAM |
+| Languages | HTML, CSS, JavaScript |
+| Version Control | Git and GitHub |
+| Tools | AWS Management Console, AWS CLI (optional) |
+
+---
+
+## Architecture
+
+User Browser
+|
+v
+Amazon CloudFront CDN (Global delivery, HTTPS)
+|
+v
+Amazon S3 Bucket (Stores HTML, CSS, JS, Images)
+|
+v
+AWS Certificate Manager (SSL/TLS for HTTPS)
+|
+v
+Amazon Route 53 (Custom domain mapping, optional)
+
+pgsql
+Copy code
+
+---
+
+## Step-by-Step Deployment Guide
+
+### Step 1: Create an S3 Bucket
+1. Open the AWS Management Console and go to S3.  
+2. Click "Create Bucket" and give it a unique name (e.g., my-serverless-website).  
+3. Uncheck "Block all public access".  
+4. In the Properties tab, enable "Static Website Hosting".  
+5. Upload your website files (index.html, style.css, script.js, etc.).  
+6. Set the index document as `index.html`.
+
+---
+
+### Step 2: Configure Bucket Policy
+To allow public access to your website files, apply the following bucket policy  
+(Replace `my-serverless-website` with your bucket name):
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "PublicReadGetObject",
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::my-serverless-website/*"
+    }
+  ]
+}
+Step 3: Set Up CloudFront Distribution
+Open CloudFront and create a new distribution.
+
+Select your S3 bucket as the origin.
+
+Choose "Redirect HTTP to HTTPS" under Viewer Protocol Policy.
+
+Attach a custom SSL certificate from AWS Certificate Manager (optional).
+
+Save the distribution and note the CloudFront domain name (e.g., d123abcd.cloudfront.net).
+
+Step 4: Configure Route 53 (Optional)
+In Route 53, create a new Hosted Zone for your domain.
+
+Create an A record (Alias) pointing to your CloudFront distribution.
+
+Once propagated, your website will be available at your domain name.
+
+Step 5: Secure with HTTPS
+Open AWS Certificate Manager (ACM) in the us-east-1 (N. Virginia) region.
+
+Request a Public Certificate for your domain name.
+
+Validate using DNS validation (Route 53 can do this automatically).
+
+Once issued, attach the certificate to your CloudFront distribution.
+
+Step 6: Clear CloudFront Cache
+After making updates to your website:
+
+Go to CloudFront → Invalidations → Create Invalidation.
+
+Enter /* and confirm to clear cached content.
+
+Output
+Public S3 URL: http://my-serverless-website.s3-website-us-east-1.amazonaws.com
+
+CloudFront URL: https://d123abcd.cloudfront.net
+
+Custom Domain (optional): https://www.myserverlesswebsite.com
+
+Benefits
+High availability and fault tolerance
+
+Global distribution with minimal latency
+
+Free SSL certificate via ACM
+
+Scalable and pay-as-you-go pricing
+
+Simplified deployment and maintenance
+
+Future Enhancements
+Integrate AWS Lambda@Edge for dynamic content handling
+
+Add contact form using AWS Lambda and API Gateway
+
+Automate deployment using AWS CodePipeline
+
+Enable performance monitoring with AWS CloudWatch
